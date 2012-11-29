@@ -1,6 +1,11 @@
-INSTALL.txt
-LICENSE.txt
-README.txt
-demos/
-extras/documentation
-
+/library/*
+!/library/Ext/
+*.tpl.php
+*.tpl.cache.php
+.idea
+Neytiri/**/lib/**
+Neytiri/application/tmp
+zend_cache*
+*/application/configs/application.ini
+*.bak
+.zfproject.xml
