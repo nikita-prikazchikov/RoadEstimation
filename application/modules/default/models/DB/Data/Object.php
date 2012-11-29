@@ -16,6 +16,14 @@ class Model_DB_Data_Object extends Model_Abstract_DBObject{
         );
     }
 
+    public function save (){
+        Model_DB_Data_Mapper::get_instance()->save( $this );
+    }
+
+    public function delete (){
+        Model_DB_Data_Mapper::get_instance()->delete( $this->getId() );
+    }
+
     public function setIdRoadFk ( $id_road_fk ){
         $this->_id_road_fk = $id_road_fk;
         return $this;

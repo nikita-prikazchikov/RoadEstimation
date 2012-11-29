@@ -33,6 +33,10 @@ class AbstractCtrl extends Zend_Controller_Action {
 
     //================================================================================================================================================
 
+    protected function getRequestData () {
+        return $this->getRequest()->getParam( 'data' );
+    }
+
     protected function getRequestId () {
         return $this->getRequest()->getParam( 'id' );
     }

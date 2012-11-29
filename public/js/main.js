@@ -144,11 +144,13 @@ dialog.get = function () {
 };
 
 var pages = {
-    road:{dialog:{}, list:{}, view:{}}
+    road:{dialog:{}, list:{}, view:{}, data : ""}
 };
 
 pages.road.dialog.init = function () {
     $(".btn-road-submit").click(pages.road.dialog.submit);
+    $("#edit-road-data").change(pages.road.dialog.parse);
+    $("#edit-road-upload").click(pages.road.dialog.upload).hide();
 };
 pages.road.dialog.show = function (roadId) {
     dialog.display(utils.buildURL("road", "dialog", {id_road:roadId}));
@@ -171,6 +173,40 @@ pages.road.dialog.submit = function () {
         },
         'json'
     );
+};
+pages.road.dialog.upload = function () {
+
+    $.post(utils.buildURL("road", "upload"),
+        {
+            id_road:$("#edit-road-id").val(),
+            data:pages.road.dialog.data
+        },
+        function (data) {
+            if (data.success) {
+                dialog.close();
+                pages.road.list.load();
+            }
+            else {
+                $("#modal_alert").html(data.message).show();
+            }
+        },
+        'json'
+    );
+};
+pages.road.dialog.parse = function() {
+    var file1 = $("#edit-road-data").prop("files")[0];
+    $("#edit-road-upload").hide();
+
+    var reader = new FileReader();
+
+    reader.onloadend =
+        function(){
+            $("#edit-road-upload").show();
+            pages.road.dialog.data = JSON.stringify( this.result.split("\r\n") );
+        };
+
+
+    reader.readAsText( file1 );
 };
 pages.road.list.init = function () {
     $(".btn-road-add").click(function () {

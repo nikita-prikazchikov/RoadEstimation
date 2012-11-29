@@ -13,6 +13,8 @@ class Model_Abstract_Filter {
 	protected $_active;
 	protected $_status;
 
+    protected $_id_road;
+
 	protected $_name;
 
 	protected $_offset;
@@ -41,6 +43,9 @@ class Model_Abstract_Filter {
 			}
 			if ( isset( $o[ "id_speciality" ] ) ) {
 				$this->setIdSpeciality( $o[ "id_speciality" ] );
+			}
+			if ( isset( $o[ "id_road" ] ) ) {
+				$this->setIdRoad( $o[ "id_road" ] );
 			}
 			if ( isset( $o[ "id_user" ] ) ) {
 				$this->setIdUser( $o[ "id_user" ] );
@@ -137,6 +142,15 @@ class Model_Abstract_Filter {
 
 	public function getId () {
 		return $this->_id;
+	}
+
+	public function setIdRoad ( $id ) {
+		$this->_id_road = $id;
+		return $this;
+	}
+
+	public function getIdRoad () {
+		return $this->_id_road;
 	}
 
 	public function setIdUser ( $id_user ) {

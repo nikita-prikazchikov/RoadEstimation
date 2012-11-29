@@ -21,9 +21,26 @@
                         <input class="text span12" id="edit-road-step" value="{$road->getStep()}"/>
                     </div>
                 </div>
+            {if $road->getId() !== null}
+                <div class="control-group">
+                    <label class="control-label">Файл данных</label>
+
+                    <div class="controls">
+                        <input type="file" class="span12" id="edit-road-data" value=""/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="btn btn-primary" id="edit-road-upload"><i class="icon-white icon-upload"></i>
+                            Загрузить файл данных
+                        </div>
+                    </div>
+                </div>
+            {/if}
             </fieldset>
         </div>
         <div id="modal_alert" class="alert alert-error fade in" style="display: none"></div>
+        <div id="modal_alert_success" class="alert alert-success fade in" style="display: none"></div>
     </div>
     <div class="modal-footer">
         <a href="#" class="btn btn-primary btn-road-submit"><i class="icon-ok icon-white"></i> Сохранить</a>

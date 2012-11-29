@@ -6,6 +6,8 @@ class Model_DB_Road_Object extends Model_Abstract_DBObject{
 
     protected $_name;
     protected $_step;
+    /** @var Model_DB_Data_Object[] */
+    private $_coordinates;
 
     public function getAssocArray (){
 
@@ -16,7 +18,7 @@ class Model_DB_Road_Object extends Model_Abstract_DBObject{
         );
     }
 
-    public function save () {
+    public function save (){
         Model_DB_Road_Mapper::get_instance()->save( $this );
     }
 
@@ -30,12 +32,41 @@ class Model_DB_Road_Object extends Model_Abstract_DBObject{
     }
 
     public function setStep ( $step ){
-        $this->_step = (float) $step;
+        $this->_step = (float)$step;
         return $this;
     }
 
     public function getStep (){
         return $this->_step;
+    }
+
+    public function loadDataFromJSON ( $value ){
+        $array = json_decode( $value, true );
+        $coordinates = $this->getCoordinates();
+        foreach( $coordinates as $item ){
+            $item->delete();
+        }
+        foreach ( $array as $item ){
+            $coordinate = new Model_DB_Data_Object();
+            $coordinate->setIdRoadFk( $this->getId());
+            $coordinate->setValue( $item );
+            $coordinate->save();
+        }
+    }
+
+    public function setCoordinates ( $coordinates ){
+        $this->_coordinates = $coordinates;
+    }
+
+    public function getCoordinates (){
+        if ( is_null( $this->_coordinates ) ){
+            $filter = new Model_Data_Filter();
+            $filter->setIdRoad( $this->getId() );
+            $this->setCoordinates(
+                Model_DB_Data_Mapper::get_instance()->findByFilter( $filter )
+            );
+        }
+        return $this->_coordinates;
     }
 
 }

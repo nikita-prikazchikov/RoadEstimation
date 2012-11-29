@@ -64,6 +64,30 @@ class RoadController extends AbstractCtrl {
 		}
 	}
 
+    public function uploadAction () {
+
+        $data = array();
+        try {
+            $roadId = $this->getRequestIdRoad();
+            if ( $roadId == 0 ) {
+                throw new Exception ("Incorrect Road ID");
+            }
+            else {
+                /** @var $road Model_DB_Road_Object */
+                $road = Model_DB_Road_Mapper::get_instance()->find( $roadId );
+            }
+            $road->loadDataFromJSON( $this->getRequestData());
+
+            $data[ 'success' ] = true;
+        }
+        catch ( Exception $e ) {
+            $data[ 'success' ] = false;
+            $data[ 'message' ] = $e->getMessage();
+        }
+
+        $this->_helper->json->sendJson( $data );
+    }
+
 	public function viewAction () {
 		$this->listAction();
 	}
