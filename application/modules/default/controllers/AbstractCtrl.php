@@ -2,20 +2,12 @@
 
 class AbstractCtrl extends Zend_Controller_Action {
 
-    protected $_acl;
     protected $_redirector;
 
     const PAGE_TITLE = "";
 
     protected function setPageTitle ( $value ) {
         $this->view->headTitle( $value );
-    }
-
-    /**
-     * @return Model_Acl
-     */
-    protected function getAcl () {
-        return $this->_acl;
     }
 
     public function init () {
@@ -45,6 +37,14 @@ class AbstractCtrl extends Zend_Controller_Action {
         return $this->getRequest()->getParam( 'id_road' );
     }
 
+    protected function getRequestLength () {
+        return $this->getRequest()->getParam( 'length' );
+    }
+
+    protected function getRequestModel () {
+        return $this->getRequest()->getParam( 'model' );
+    }
+
     protected function getRequestName () {
         return $this->getRequest()->getParam( 'name' );
     }
@@ -53,7 +53,15 @@ class AbstractCtrl extends Zend_Controller_Action {
         return $this->getRequest()->getParam( 'step' );
     }
 
+    protected function getRequestSupport () {
+        return $this->getRequest()->getParam( 'support' );
+    }
+
     protected function getRequestValue () {
         return $this->getRequest()->getParam( 'value' );
+    }
+
+    protected function getRequestWeight () {
+        return $this->getRequest()->getParam( 'weight' );
     }
 }

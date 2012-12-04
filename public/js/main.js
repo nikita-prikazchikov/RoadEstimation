@@ -1,6 +1,7 @@
 var generic = {};
 var header = {};
-header.init = function () {};
+header.init = function () {
+};
 
 var utils = {};
 utils.buildURL = function (controller, action, parameters) {
@@ -16,7 +17,7 @@ utils.buildURL = function (controller, action, parameters) {
     }
     var loc = document.location;
     var url = loc.protocol + '//' + loc.host + '/' + controller + ( action != undefined && action.length > 0 ? '/' + action : '');
-    return url + "?" + strEnd;
+    return url + ( strEnd != "" ? "?" + strEnd : "" );
 };
 utils.array2json = function (arr) {
     var parts = [];
@@ -144,7 +145,8 @@ dialog.get = function () {
 };
 
 var pages = {
-    road:{dialog:{}, list:{}, view:{}, data : ""}
+    road:{dialog:{}, list:{}, view:{}, data:""},
+    calc:{list:{}, view:{}}
 };
 
 pages.road.dialog.init = function () {
@@ -193,20 +195,20 @@ pages.road.dialog.upload = function () {
         'json'
     );
 };
-pages.road.dialog.parse = function() {
+pages.road.dialog.parse = function () {
     var file1 = $("#edit-road-data").prop("files")[0];
     $("#edit-road-upload").hide();
 
     var reader = new FileReader();
 
     reader.onloadend =
-        function(){
+        function () {
             $("#edit-road-upload").show();
-            pages.road.dialog.data = JSON.stringify( this.result.split("\r\n") );
+            pages.road.dialog.data = JSON.stringify(this.result.split("\r\n"));
         };
 
 
-    reader.readAsText( file1 );
+    reader.readAsText(file1);
 };
 pages.road.list.init = function () {
     $(".btn-road-add").click(function () {
@@ -219,5 +221,27 @@ pages.road.list.init = function () {
 pages.road.list.load = function () {
     $(".road-list-container").load(utils.buildURL("road", "list"));
 };
-pages.road.view.init = function () {};
+pages.road.view.init = function () {
+};
 
+pages.calc.view.init = function () {
+    var $container = $(".container-calculation");
+    $container.find(".btn-road-calculate").click(pages.calc.list.load);
+};
+pages.calc.list.load = function(){
+    var $container = $(".container-calculation");
+
+    $.post(utils.buildURL("calc", "result"),
+        {
+            id_road:$container.find("select[name='filter-road']").val(),
+            weight:$container.find("input[name='filter-weight']").val(),
+            length:$container.find("input[name='filter-length']").val(),
+            support:$container.find("input[name='filter-support']").val().split(","),
+            model:$container.find("select[name='filter-model']").val()
+        },
+        function (data) {
+            $container.find(".result-container").html(data);
+        },
+        'html'
+    );
+};
