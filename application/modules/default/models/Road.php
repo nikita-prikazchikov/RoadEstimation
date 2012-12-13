@@ -51,7 +51,7 @@ class Model_Road{
     }
 
     public function isCoordinateSet ( $x ){
-        return isset ( $this->_coordinates[ $x ] );
+        return isset ( $this->_coordinates[ (string)$x ] );
     }
 
     public function getStart (){
@@ -82,9 +82,10 @@ class Model_Road{
         $p2 = new Model_Coordinate( 0, 0 );
 
         foreach ( $this->_coordinates as $item ){
-            if ( $x >= $item->getX() ){
-                $p1 = $item;
-                $p2 = next( $this->_coordinates );
+            if ( $x >= $p2->getX() && $p2 ){
+                $p1 = $p2;
+                $p2 = $item;
+//                $p2 = next( $this->_coordinates );
             }
         }
         return array( $p1, $p2 );

@@ -2,15 +2,27 @@
 
 abstract class Model_Units_Abstract{
 
-    private $_base;
-    private $_weight;
-    private $_supportCount;
+    protected $_base;
+    protected $_weight;
+    protected $_supportCount;
     /** @var Model_Road */
-    private $_road;
+    protected $_road;
     /** @var Model_Road */
-    private $_resultRoad;
+    protected $_resultRoad;
+
+    protected $x;
+    protected $y;
 
     abstract function getCoordinate( $x );
+
+    protected function calculateCoordinates( $pointX ){
+        $start = $pointX - $this->getBase() / 2;
+        $step = (float) $this->getBase() / ( $this->getSupportCount() - 1 );
+        for ( $i = 0; $i < $this->getSupportCount(); $i ++ ){
+            $this->x[ $i ] = $start + $i * $step;
+            $this->y[ $i ] = $this->getRoad()->getCoordinate( $this->x[ $i ]);
+        }
+    }
 
     function __construct (){
         $this->setResultRoad( new Model_Road());
