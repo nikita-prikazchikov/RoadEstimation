@@ -14,7 +14,7 @@
     <tr>
     {foreach from=$data->getSupportList() item=key}
         <th>Y</th>
-        <th>%</th>
+        <th></th>
     {/foreach}
     </tr>
     </thead>
@@ -27,7 +27,10 @@
         <td>{$average->getCoordinate($coordinate->getX())}</td>
         {foreach from=$data->getSupportList() item=key}
             <td>{($data->getUnitModelListBySupportCount( $key )->getCoordinate( $coordinate->getX() ))|default:"-"}</td>
-            <td>{(abs( $data->getUnitModelListBySupportCount( $key )->getCoordinate( $coordinate->getX() ) - $average->getCoordinate($coordinate->getX()) ) * 100 / $average->getCoordinate($coordinate->getX()))|string_format:"%.2f"}%</td>
+            {*<td>{(abs( $data->getUnitModelListBySupportCount( $key )->getCoordinate( $coordinate->getX() ) - $average->getCoordinate($coordinate->getX()) ) * 100 / $average->getCoordinate($coordinate->getX()))|string_format:"%.2f"}%</td>*}
+            {*<td>{(abs( $data->getUnitModelListBySupportCount( $key )->getCoordinate( $coordinate->getX() ) - $coordinate->getY() ) )|string_format:"%.2f"}</td>*}
+            <td>{( $data->getUnitModelListBySupportCount( $key )->getCoordinate( $coordinate->getX() ) - $coordinate->getY() )|string_format:"%.4f"}</td>
+            {*<td>{($average->getCoordinate($coordinate->getX()) - $data->getUnitModelListBySupportCount( $key )->getCoordinate( $coordinate->getX() ))|string_format:"%.4f"}</td>*}
         {/foreach}
     </tr>
     {/foreach}

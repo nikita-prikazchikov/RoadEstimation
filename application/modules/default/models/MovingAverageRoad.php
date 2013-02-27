@@ -56,22 +56,35 @@ class Model_MovingAverageRoad{
         $end = $road->getEnd();
         $step = $this->getStep();
         $base = $this->getBase();
+        $sumStep = 0.1;
 
-        $points = ( $this->getBase() / $this->getStep() );
+        $points = ( $base / $sumStep ) + 1;
+        $dStep = $step / $sumStep;
 
-        $negativeOffset = -( $points & 1 ? $points / 2 : $points / 2 - 1 );
-        $positiveOffset = $points / 2;
+        $positiveOffsetValue = $base / 2;
+        $negativeOffsetValue = $positiveOffsetValue;
 
-        $negativeOffsetValue = $negativeOffset * $step;
-        $positiveOffsetValue = ( $positiveOffset + 1 ) * $step ;
-
+//        $dSum = 0;
+//
+//        for ( $j = $start - $negativeOffsetValue; $j < $start - $negativeOffsetValue + $step - $sumStep; $j += $sumStep ){
+//            $dSum += $road->getCoordinate( $j );
+//        }
         $sum = 0;
-        for ( $i = $negativeOffset; $i <= $positiveOffset; $i++ ){
-            $sum += $road->getCoordinate( $start + $i * $this->getStep() );
+
+        for ( $j = $start - $negativeOffsetValue; $j <= $start + $positiveOffsetValue; $j += $sumStep ){
+            $sum += $road->getCoordinate( $j );
         }
-        for ( $i = 0, $coordinate = $start; $coordinate < $end; $i++, $coordinate += $step ){
+        for ( $coordinate = $start; $coordinate < $end; $i++, $coordinate += $step ){
+
             $model->addCoordinate( new Model_Coordinate( $coordinate, $sum / $points ) );
-            $sum = $sum - $road->getCoordinate( $coordinate + $negativeOffsetValue ) + $road->getCoordinate( $coordinate + $positiveOffsetValue );
+            // Remove first N points from sum
+            for ( $i = 0, $j = $coordinate - $negativeOffsetValue; $i < $dStep; $j += $sumStep, $i ++ ){
+                $sum -= $road->getCoordinate( $j );
+            }
+            // Add next N points to the sum
+            for ( $i = 0, $j = $coordinate + $positiveOffsetValue + $sumStep; $i < $dStep; $j += $sumStep, $i ++ ){
+                $sum += $road->getCoordinate( $j );
+            }
         }
 
         return $model;
