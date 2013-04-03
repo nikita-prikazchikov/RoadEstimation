@@ -28,6 +28,10 @@ class Model_Road{
         $this->_coordinates[ (string)$coordinate->getX() ] = $coordinate;
     }
 
+    /**
+     * @param $x
+     * @return float
+     */
     public function getCoordinate ( $x ){
         if ( $this->isCoordinateSet( (string)$x ) ){
             return $this->_coordinates[ (string)$x ]->getY();

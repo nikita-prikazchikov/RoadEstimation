@@ -56,6 +56,23 @@ class CalcController extends AbstractCtrl{
         }
     }
 
+    public function processmicroprofileAction (){
+        try {
+            /** @var $dbRoad Model_DB_Road_Object */
+            $dbRoad = Model_DB_Road_Mapper::get_instance()->find( $this->getRequestIdRoad() );
+
+            $data = new Model_Microprofile();
+            $data->setLength($this->getRequestLength());
+            $data->setStep( $dbRoad->getStep() );
+            $data->setSourceRoad( new Model_Road( $dbRoad ));
+
+            $this->view->assign( "data", $data );
+        }
+        catch ( Exception $e ){
+            echo $e->getMessage();
+        }
+    }
+
 
     public function viewAction (){
         try {

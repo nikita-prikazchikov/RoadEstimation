@@ -227,6 +227,7 @@ pages.road.view.init = function () {
 pages.calc.view.init = function () {
     var $container = $(".container-calculation");
     $container.find(".btn-road-calculate").click(pages.calc.list.load);
+    $container.find(".btn-road-process").click(pages.calc.list.loadMicroprofile);
 };
 pages.calc.list.load = function(){
     var $container = $(".container-calculation");
@@ -238,6 +239,20 @@ pages.calc.list.load = function(){
             length:$container.find("input[name='filter-length']").val(),
             support:$container.find("input[name='filter-support']").val().split(","),
             model:$container.find("select[name='filter-model']").val()
+        },
+        function (data) {
+            $container.find(".result-container").html(data);
+        },
+        'html'
+    );
+};
+pages.calc.list.loadMicroprofile = function(){
+    var $container = $(".container-calculation");
+
+    $.post(utils.buildURL("calc", "processmicroprofile"),
+        {
+            id_road:$container.find("select[name='filter-road']").val(),
+            length:$container.find("input[name='filter-length']").val()
         },
         function (data) {
             $container.find(".result-container").html(data);

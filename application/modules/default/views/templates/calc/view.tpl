@@ -1,4 +1,4 @@
-<div class="container-fluid container-calculation">
+<div class="container-calculation">
     <div class="well">
         <div class="form form-horizontal">
             <div class="control-group">
@@ -44,6 +44,7 @@
 
             <div class="form-actions">
                 <div class="btn btn-primary btn-road-calculate"><i class="icon-white icon-ok"></i> Расчитать</div>
+                <div class="btn btn-primary btn-road-process"><i class="icon-white icon-ok"></i> Обработать микропрофиль</div>
             </div>
         </div>
     </div>
