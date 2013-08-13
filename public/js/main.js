@@ -249,6 +249,8 @@ pages.calc.list.load = function(){
 pages.calc.list.loadMicroprofile = function(){
     var $container = $(".container-calculation");
 
+    $container.find(".result-container").html( '<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>' );
+
     $.post(utils.buildURL("calc", "processmicroprofile"),
         {
             id_road:$container.find("select[name='filter-road']").val(),

@@ -23,7 +23,7 @@ class Model_Microprofile {
         $road = $this->getSmoothedRoad();
         $length = $road->getCount();
         $step = $this->getStep();
-        for ( $k = 0; $k < $length; $k++ ) {
+        for ( $k = 0; $k < $length - 1; $k++ ) {
             $sum = 0.0;
             for ( $t = 0; $t < ( $length - $k ); $t++ ) {
                 $sum += $road->getCoordinate( $t * $step ) * $road->getCoordinate( ( $t + $k ) * $step );
