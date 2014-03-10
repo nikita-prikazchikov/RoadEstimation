@@ -43,8 +43,9 @@
             </div>
 
             <div class="form-actions">
-                <div class="btn btn-primary btn-road-calculate"><i class="icon-white icon-ok"></i> Расчитать</div>
+                <div class="btn btn-primary btn-road-calculate"><i class="icon-white icon-ok"></i> Рассчитать</div>
                 <div class="btn btn-primary btn-road-process"><i class="icon-white icon-ok"></i> Обработать микропрофиль</div>
+                <div class="btn btn-primary btn-road-process-table"><i class="icon-white icon-ok"></i> Рассчитать альфа и бета</div>
             </div>
         </div>
     </div>

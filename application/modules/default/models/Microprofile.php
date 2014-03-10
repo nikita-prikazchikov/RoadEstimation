@@ -6,6 +6,11 @@ class Model_Microprofile {
     private $_expectationValue;
     private $_length;
     private $_step;
+
+    private $_alpha;
+    private $_beta;
+    private $_tau;
+
     /** @var Model_MovingAverageRoad */
     private $averageRoad;
     /** @var array(float) */
@@ -23,12 +28,17 @@ class Model_Microprofile {
         $road = $this->getSmoothedRoad();
         $length = $road->getCount();
         $step = $this->getStep();
+        $average = $this->getExpectationValue();
         for ( $k = 0; $k < $length - 1; $k++ ) {
             $sum = 0.0;
             for ( $t = 0; $t < ( $length - $k ); $t++ ) {
-                $sum += $road->getCoordinate( $t * $step ) * $road->getCoordinate( ( $t + $k ) * $step );
+                $sum += ( $road->getCoordinate( $t * $step ) - $average ) * ( $road->getCoordinate( ( $t + $k ) * $step ) - $average );
             }
-            $this->correlation[ $k ] = $sum / ( $length - $k );
+            $cor = ( $sum / ( $length - $k ) ) / $this->getDispersion();
+            $this->correlation[ $k ] = $cor;
+            if ( $cor < 0 ){
+                break;
+            }
         }
     }
 
@@ -38,7 +48,7 @@ class Model_Microprofile {
         for ( $x = $this->getSmoothedRoad()->getStart(); $x < $this->getSmoothedRoad()->getEnd(); $x += $this->getStep() ) {
             $sum += pow( $this->getSmoothedRoad()->getCoordinate( $x ) - $expectationValue, 2 );
         }
-        $this->setDispersion( $sum / $this->getSmoothedRoad()->getCount() );
+        $this->setDispersion( $sum / ( $this->getSmoothedRoad()->getCount() - 1 ) );
     }
 
     private function calculateExpectationValue (){
@@ -46,7 +56,56 @@ class Model_Microprofile {
         for ( $x = $this->getSmoothedRoad()->getStart(); $x < $this->getSmoothedRoad()->getEnd(); $x += $this->getStep() ) {
             $sum += $this->getSmoothedRoad()->getCoordinate( $x );
         }
-        $this->setExpectationValue( $sum / $this->getSmoothedRoad()->getCount() );
+        $this->setExpectationValue( $sum / ( $this->getSmoothedRoad()->getCount() ) );
+    }
+
+    public function approximate(){
+        $correlation = $this->getCorrelation();
+        $step = $this->getStep();
+
+        $this->_tau = 0;
+        for ( $i = 0; $i < count( $correlation ); $i++ ) {
+            if ( $correlation[ $i ] < 0 ){
+                $p1 = new Model_Coordinate( $step * ( $i - 1 ), $correlation[ $i - 1 ]  );
+                $p2 = new Model_Coordinate( $step * ( $i ), $correlation[ $i ]  );
+                $k = ( $p2->getY() - $p1->getY() ) / ( $p2->getX() - $p1->getX() );
+                $b = $p2->getY() - $k * $p2->getX();
+                $this->_tau = - $b / $k;
+                break;
+            }
+        }
+
+        $this->_beta = pi() / ( 2 * $this->_tau );
+
+        $s1 = 0;
+        $s2 = 0;
+        for ( $i = 0; $i * $step < $this->_tau; $i++ ){
+            $tau = $i * $step;
+            $ro_tau = $correlation[ $i ];
+            $s1 += abs( $tau * (log( $ro_tau / cos( $this->_beta * $tau ))));
+            $s2 += $tau * $tau;
+        }
+        if ( $this->_tau < $step ){
+            $this->_alpha = 1;
+        }
+        else {
+            $this->_alpha = $s1 / $s2;
+        }
+    }
+
+    public function getResultTable(){
+        $res = array();
+        $correlation = $this->getCorrelation();
+        $step = $this->getStep();
+        for ( $i = 0; $i * $step < $this->_tau; $i++ ){
+            $tau = $i * $step;
+            array_push($res, array(
+                "tau" => $tau,
+                "ro_tau" => $correlation[ $i ],
+                "ro_tau_calc" => exp( - $this->getAlpha() * $tau ) * cos( $this->getBeta() * $tau )
+            ));
+        }
+        return $res;
     }
 
     /**
@@ -151,4 +210,28 @@ class Model_Microprofile {
     public function setStep ( $step ){
         $this->_step = $step;
     }
+
+    public function getAlpha(){
+        if ( is_null( $this->_alpha )){
+            $this->approximate();
+        }
+        return $this->_alpha;
+    }
+
+    public function getBeta(){
+        if ( is_null( $this->_beta )){
+            $this->approximate();
+        }
+        return $this->_beta;
+    }
+
+    public function getTau(){
+        if ( is_null( $this->_tau )){
+            $this->approximate();
+        }
+        return $this->_tau;
+    }
+
+
+
 }

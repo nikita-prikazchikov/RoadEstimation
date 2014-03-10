@@ -66,6 +66,8 @@ class CalcController extends AbstractCtrl{
             $data->setStep( $dbRoad->getStep() );
             $data->setSourceRoad( new Model_Road( $dbRoad ));
 
+            $data->approximate();
+
             $this->view->assign( "data", $data );
         }
         catch ( Exception $e ){
@@ -73,6 +75,28 @@ class CalcController extends AbstractCtrl{
         }
     }
 
+    public function approximateAction (){
+        try {
+            /** @var $dbRoad Model_DB_Road_Object */
+            $dbRoad = Model_DB_Road_Mapper::get_instance()->find( $this->getRequestIdRoad() );
+
+
+            $length = array(1.11, 1.38, 1.66, 1.85, 2.08, 2.22, 2.77, 2.78, 3.46, 3.7, 4.62, 5.53, 5.55, 7.4, 8.3, 9.23, 11.1, 13.85, 16.6, 22.2, 27.7);
+            $road = new Model_Road( $dbRoad );
+            $data = array();
+            for( $i = 0; $i < count($length); $i ++ ){
+                $profile = new Model_Microprofile();
+                $profile->setLength($length[$i]);
+                $profile->setStep( $dbRoad->getStep() );
+                $profile->setSourceRoad( $road );
+                $data[] = $profile;
+            }
+            $this->view->assign( "data", $data );
+        }
+        catch ( Exception $e ){
+            echo $e->getMessage();
+        }
+    }
 
     public function viewAction (){
         try {
